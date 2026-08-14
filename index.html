@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Kendriya Vidyalaya Portal</title>
+  <!-- Link to external stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ==========================================
+       LOGIN VIEW
+       ========================================== -->
+  <div id="loginSection" style="width: 320px; margin: 100px auto; border: 2px solid #0b3c5d; padding: 20px; background: white; border-radius: 4px;">
+    <h2 style="text-align:center; color:#0b3c5d; margin-top:0;">Kendriya Vidyalaya</h2>
+    <h3 style="text-align:center; margin-top:0; font-size:14px; color:#666;">Sign In</h3>
+    <form onsubmit="handleLogin(event)">
+      <div class="form-field">
+        <label>Username:</label>
+        <input type="text" id="loginUser" required>
+      </div>
+      <div class="form-field">
+        <label>Password:</label>
+        <input type="password" id="loginPass" required>
+      </div>
+      <button type="submit" class="btn" style="width:100%;">Login</button>
+    </form>
+    <div style="margin-top: 15px; font-size: 11px; border-top: 1px dashed #ccc; padding-top: 10px; color: #555;">
+      <strong>Demo Accounts:</strong><br>
+      Admin: admin / Admin@123<br>
+      Teacher: teacher1 / Teacher@123<br>
+      Student: student1 / Student@123
+    </div>
+  </div>
+
+  <!-- ==========================================
+       DASHBOARD VIEW
+       ========================================== -->
+  <div id="appLayout" class="hidden">
+    <header>
+      <h1>Kendriya Vidyalaya School System</h1>
+      <span id="userBadge" style="font-weight:bold;">Welcome User</span>
+    </header>
+
+    <div class="wrapper">
+      <!-- SIDEBAR MENU -->
+      <div class="sidebar">
+        <div id="adminMenu" class="hidden">
+          <a href="#" onclick="showView('adminDashboard')" class="menu-link" id="link-adminDashboard">Dashboard</a>
+          <a href="#" onclick="showView('students')" class="menu-link" id="link-students">Students</a>
+          <a href="#" onclick="showView('teachers')" class="menu-link" id="link-teachers">Teachers</a>
+        </div>
+        <div id="teacherMenu" class="hidden">
+          <a href="#" onclick="showView('teacherDashboard')" class="menu-link" id="link-teacherDashboard">Dashboard</a>
+          <a href="#" onclick="showView('attendance')" class="menu-link" id="link-attendance">Attendance</a>
+          <a href="#" onclick="showView('marks')" class="menu-link" id="link-marks">Enter Marks</a>
+        </div>
+        <div id="studentMenu" class="hidden">
+          <a href="#" onclick="showView('studentDashboard')" class="menu-link" id="link-studentDashboard">Dashboard</a>
+          <a href="#" onclick="showView('studentReport')" class="menu-link" id="link-studentReport">My Marks</a>
+        </div>
+        <a href="#" onclick="showView('changePassword')" class="menu-link" id="link-changePassword" style="margin-top: 30px;">Profile Settings</a>
+        <a href="#" onclick="handleLogout()" style="color:red; font-weight:bold;">Sign Out</a>
+      </div>
+
+      <!-- MAIN VIEWS -->
+      <div class="main-body">
+
+        <!-- Admin stats -->
+        <div id="adminDashboardView" class="view-container hidden">
+          <div class="panel">
+            <h2>School Administration Dashboard</h2>
+            <p>Total Registered Students: <strong id="valStudents">0</strong></p>
+            <p>Total Registered Teachers: <strong id="valTeachers">0</strong></p>
+            <p>Total Active Classes: <strong id="valClasses">0</strong></p>
+            <p>Total Database Users: <strong id="valUsers">0</strong></p>
+          </div>
+        </div>
+
+        <!-- Student CRUD -->
+        <div id="studentsView" class="view-container hidden">
+          <div class="panel">
+            <h2>Student Directory</h2>
+            <button class="btn" onclick="openAddStudentModal()">+ Add New Student</button>
+            <table border="1">
+              <thead>
+                <tr>
+                  <th>Roll No</th>
+                  <th>Full Name</th>
+                  <th>Username</th>
+                  <th>Class</th>
+                  <th>Address</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="studentTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Teacher List -->
+        <div id="teachersView" class="view-container hidden">
+          <div class="panel">
+            <h2>Teacher Directory</h2>
+            <button class="btn" onclick="openAddTeacherModal()">+ Add New Teacher</button>
+            <table border="1">
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Email ID</th>
+                  <th>Role</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="teacherTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Teacher Welcome -->
+        <div id="teacherDashboardView" class="view-container hidden">
+          <div class="panel">
+            <h2>Teacher Dashboard</h2>
+            <p>Select options from the sidebar to mark students attendance or upload exam marksheet details.</p>
+          </div>
+        </div>
+
+        <!-- Attendance register -->
+        <div id="attendanceView" class="view-container hidden">
+          <div class="panel">
+            <h2>Class Attendance</h2>
+            <div class="form-field" style="display:inline-block; margin-right:20px;">
+              <label>Class Name:</label>
+              <select id="attClass" onchange="loadAttendanceList()">
+                <option value="">Choose Class</option>
+                <option value="Class 10">Class 10</option>
+              </select>
+            </div>
+            <div class="form-field" style="display:inline-block;">
+              <label>Date:</label>
+              <input type="date" id="attDate" onchange="loadAttendanceList()">
+            </div>
+            <table border="1">
+              <thead>
+                <tr>
+                  <th>Roll Number</th>
+                  <th>Student Name</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="attendanceTableBody">
+                <tr><td colspan="3" style="text-align:center;">Select class name and target date first.</td></tr>
+              </tbody>
+            </table>
+            <button id="saveAttBtn" class="btn hidden" style="margin-top:15px;" onclick="saveAttendanceRegister()">Save Attendance</button>
+          </div>
+        </div>
+
+        <!-- Marks upload -->
+        <div id="marksView" class="view-container hidden">
+          <div class="panel">
+            <h2>Student Marks Sheet</h2>
+            <button class="btn" onclick="openAddMarksModal()">Upload Grade Marks</button>
+            <table border="1">
+              <thead>
+                <tr>
+                  <th>Student</th>
+                  <th>Class</th>
+                  <th>Subject</th>
+                  <th>Exam Type</th>
+                  <th>Marks</th>
+                </tr>
+              </thead>
+              <tbody id="marksTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Student welcome -->
+        <div id="studentDashboardView" class="view-container hidden">
+          <div class="panel">
+            <h2>Student Dashboard</h2>
+            <p>Welcome to Kendriya Vidyalaya Portal. Select "My Marks" from sidebar menu to check your latest results card.</p>
+          </div>
+        </div>
+
+        <!-- Student report card -->
+        <div id="studentReportView" class="view-container hidden">
+          <div class="panel">
+            <h2>Academic Results</h2>
+            <table border="1">
+              <thead>
+                <tr>
+                  <th>Subject</th>
+                  <th>Exam Type</th>
+                  <th>Marks Obtained</th>
+                </tr>
+              </thead>
+              <tbody id="studentReportBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Change Password profile -->
+        <div id="changePasswordView" class="view-container hidden">
+          <div class="panel">
+            <h2>Change Password Settings</h2>
+            <form onsubmit="handleChangePassword(event)">
+              <div class="form-field">
+                <label>Current Password:</label>
+                <input type="password" id="curPwd" required>
+              </div>
+              <div class="form-field">
+                <label>New Password:</label>
+                <input type="password" id="newPwd" required>
+              </div>
+              <button type="submit" class="btn">Update Password</button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- POPUP BOX -->
+  <div id="popupBox" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center;">
+    <div style="background:white; border:2px solid #0b3c5d; padding:20px; width:400px; border-radius:4px;">
+      <h3 id="popupTitle" style="margin-top:0; border-bottom:1px solid #ccc; padding-bottom:5px; color:#0b3c5d;">Title</h3>
+      <div id="popupBody" style="margin: 15px 0;"></div>
+      <div style="text-align:right;" id="popupFooter"></div>
+    </div>
+  </div>
+
+  <!-- Link to external script -->
+  <script src="script.js"></script>
+</body>
+</html>

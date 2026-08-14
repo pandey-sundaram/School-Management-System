@@ -1,0 +1,20 @@
+{
+  "name": "school-management-system",
+  "version": "1.0.0",
+  "description": "Very basic School Website",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "seed": "node -e \"const fs=require('fs'); const mysql=require('mysql2/promise'); mysql.createConnection({host:'localhost',user:'root',password:'12345678',multipleStatements:true}).then(async c=>{console.log('🔄 Seeding database...'); const sql=fs.readFileSync('database.sql','utf8'); await c.query(sql); console.log('✅ Seeding complete!'); process.exit(0);}).catch(e=>{console.error(e); process.exit(1);})\""
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "express": "^4.18.2",
+    "express-session": "^1.18.0",
+    "mysql2": "^3.9.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
