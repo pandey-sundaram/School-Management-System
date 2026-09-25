@@ -1,4 +1,4 @@
-# Kendriya Vidyalaya - School Management System
+# School Management System
 
 A simple, beginner-friendly, full-stack School Management System built using pure HTML, CSS, JavaScript, Node.js (Express), and MySQL.
 
